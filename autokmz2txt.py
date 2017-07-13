@@ -6,6 +6,7 @@ from zipfile import ZipFile # Unzip KMZ
 from fastkml import kml # Parse KML
 
 def download(file_name):
+    print("連線中...")
     # Url
     url = 'http://opendata.cwb.gov.tw/govdownload?dataid=O-A0039-001&authorizationkey=rdec-key-123-45678-011121314'
     # Mock this scrapy as a Mac using Chrome
@@ -18,9 +19,10 @@ def download(file_name):
     with open(file_name, "wb") as f:
         for data in tqdm(g.iter_content()):
             f.write(data)
+    print("下載完成！\n")
 
 def kmz2kml(kmz_file_name, kml_file_name):
-    print("解壓縮中...\n")
+    print("解壓縮中...")
     # Define which file to Unzip
     kml = ZipFile(kmz_file_name, 'r')
     # Unzip KMZ
@@ -29,9 +31,11 @@ def kmz2kml(kmz_file_name, kml_file_name):
     kml.close()
     # Rename
     os.rename('./KML/doc.kml', kml_file_name)
+    print("解壓縮完成！\n")
 
 
 def kml2txt(kml_file_name, txt_file_name):
+    print("正在解析資料...")
     # Calculate file size
     b = int(os.path.getsize(kml_file_name))
     # Open file(Readonly)
@@ -43,7 +47,6 @@ def kml2txt(kml_file_name, txt_file_name):
 
     # Create the KML object to store the parsed result
     k = kml.KML()
-
     # Read in the KML string
     k.from_string(kml_string)
 
@@ -54,14 +57,16 @@ def kml2txt(kml_file_name, txt_file_name):
 
     # if data collected
     if len(dataset):
-        print("搜集到共 "+str(len(dataset))+" 筆資料")
+        print("搜集到共 "+str(len(dataset))+" 筆資料\n")
         print(dataset[0].name)
     else:
-        print("0筆資料")
-        return
+        print("0 筆資料，無需新增紀錄\n")
     
 
 if __name__ == '__main__':
+    print("====================")
+    print("     閃電資料爬蟲     ")
+    print("====================")
     # Get datetime now
     time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
     print("現在時間：" + time + "\n")
@@ -74,5 +79,5 @@ if __name__ == '__main__':
     # Unzip KMZ
     kmz2kml(kmz_file_name, kml_file_name)
     kml2txt(kml_file_name, txt_file_name)
-
+    print("程式結束")
 
