@@ -57,8 +57,28 @@ def kml2txt(kml_file_name, txt_file_name):
 
     # if data collected
     if len(dataset):
-        print("搜集到共 "+str(len(dataset))+" 筆資料\n")
-        print(dataset[0].name)
+        print("搜集到共 "+str(len(dataset))+" 筆資料，寫入中...\n")
+
+        txt = "[項次]\t[閃電種類]\t[日期 Y-M-D]\t[時間 H:M:S:s]\t[強度 kAmp]\t[緯度]\t[經度]\n"
+        record_no = 1 # 項次
+        
+        for ds in dataset:
+            data = str.split(ds.description)
+            record_type = data[1] + "閃電" # 閃電種類
+            record_date = data[3] # 日期 Y-M-D
+            record_time = data[4] # 時間 H:M:S:s
+            record_kAmp = data[6] # 強度 kAmp
+            record_longitude = data[9] # 經度
+            record_latitude = data[11] # 緯度
+
+            txt += str(record_no) + "\t"
+            txt += record_type + "\t" + record_date + "\t" + record_time + "\t"
+            txt += record_kAmp + "\t"
+            txt += record_longitude + "\t" + record_latitude + "\t"
+            txt += "\n"
+            record_no += 1
+
+        print(txt)
     else:
         print("0 筆資料，無需新增紀錄\n")
     
@@ -78,6 +98,7 @@ if __name__ == '__main__':
     download(kmz_file_name)
     # Unzip KMZ
     kmz2kml(kmz_file_name, kml_file_name)
+    # Parse KML
     kml2txt(kml_file_name, txt_file_name)
     print("程式結束")
 
