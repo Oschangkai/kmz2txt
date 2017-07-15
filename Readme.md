@@ -13,5 +13,5 @@
 `pip3 install -r requirements.txt`
 
 ## 定時排程
-    ### Windows - 工作排程器
-    ### Linux/Mac - Crontab
+### Windows - 工作排程器
+### Linux/Mac - Crontab
