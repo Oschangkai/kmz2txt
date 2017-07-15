@@ -5,7 +5,7 @@ from tqdm import tqdm # Progress Bar
 from zipfile import ZipFile # Unzip KMZ
 from fastkml import kml # Parse KML
 
-def download(file_name):
+def download(kmz_file_name):
     print("連線中...")
     # Url
     url = 'http://opendata.cwb.gov.tw/govdownload?dataid=O-A0039-001&authorizationkey=rdec-key-123-45678-011121314'
@@ -16,7 +16,7 @@ def download(file_name):
 
     # Download data
     print("下載中...")
-    with open(file_name, "wb") as f:
+    with open(kmz_file_name, "wb") as f:
         for data in tqdm(g.iter_content()):
             f.write(data)
     print("下載完成！\n")
@@ -54,15 +54,16 @@ def kml2txt(kml_file_name, txt_file_name):
     dataset = list(k.features())
     dataset = list(dataset[0].features())
     dataset = list(dataset[0].features())
+    
+    txt = "[項次]\t[閃電種類]\t[日期 Y-M-D]\t[時間 H:M:S:s]\t[強度 kAmp]\t[經度]\t[緯度]\n"
 
     # if data collected
     if len(dataset):
-        print("搜集到共 "+str(len(dataset))+" 筆資料，寫入中...\n")
+        print("搜集到共 "+str(len(dataset))+" 筆資料，寫入中...")
 
-        txt = "[項次]\t[閃電種類]\t[日期 Y-M-D]\t[時間 H:M:S:s]\t[強度 kAmp]\t[緯度]\t[經度]\n"
         record_no = 1 # 項次
         
-        for ds in dataset:
+        for ds in tqdm(dataset):
             data = str.split(ds.description)
             record_type = data[1] + "閃電" # 閃電種類
             record_date = data[3] # 日期 Y-M-D
@@ -77,11 +78,14 @@ def kml2txt(kml_file_name, txt_file_name):
             txt += record_longitude + "\t" + record_latitude + "\t"
             txt += "\n"
             record_no += 1
-
-        print(txt)
     else:
-        print("0 筆資料，無需新增紀錄\n")
+        print("0 筆資料，無需新增紀錄")
     
+    # Write File
+    with open(txt_file_name, "w") as f:
+        f.write(txt)
+
+    print("\n")
 
 if __name__ == '__main__':
     print("====================")
